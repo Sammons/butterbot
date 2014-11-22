@@ -16,8 +16,7 @@ bot.send = function(target, msg)
 	bot.write('PRIVMSG #'+target+' :'+msg);
 }
 
-bot.vocabulary = require('./vocabulary.js')
-
+require('./vocabulary.js')(bot);
 require('./actions.js' )(bot);
 require('./triggers.js')(bot);
 
