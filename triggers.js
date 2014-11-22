@@ -16,6 +16,12 @@ module.exports = function(bot) {
 	});
 
 	bot.on('message', function(bot, from, target, content) {
+		if (content.match(/^melt\s.*/)) {
+			bot.think(from, target, content);
+		}
+	})
+
+	bot.on('message', function(bot, from, target, content) {
 		if (from.trim().match(/slackbot/i)){
 			bot.trigger('slackbot_spoke', bot, from, target, content);
 		}
@@ -23,7 +29,9 @@ module.exports = function(bot) {
 
 	bot.on('message', function(bot, from, target, content) {
 		const tokens = {
-			NUMBER: /^[0-9]+(\.[0-9]+)?/,
+			EXPONENT: /^([0-9]+\e\+[0-9]+)/,
+			DECIMAL: /^([0-9]*)?\.[0-9]+/,
+			NUMBER: /^[0-9]+/,
 			LPAREN:  /^\(/,
 			RPAREN: /^\)/,
 			OP: /^(\*|\+|\/)/,
@@ -32,6 +40,8 @@ module.exports = function(bot) {
 		non_terminals = {
 			MATH_EXP: [
 				[ 'NUMBER' ],
+				[ 'DECIMAL'],
+				[ 'EXPONENT' ],
 				[ 'LPAREN', 'MATH_EXP', 'RPAREN' ],
 				[ 'MATH_EXP', 'OP', 'MATH_EXP' ]
 			]
@@ -50,11 +60,15 @@ module.exports = function(bot) {
 
 	bot.on('message', function(bot,from, target, content) {
 		const tokens = {
-			ME: /^(butterbot|buttery|bot|butter)/i,
+			ME: /^(butterbot|buttery|bot|butter|butters)/i,
 			GREETING:  /^(hello|sup|what's\sup|what's\snew|hey|hi|yo)/i,
-			IGNORE: /^\s/ //necessary to delimit tokens, not tested with other than whitespace
+			AT: /^\@/,
+			IGNORE: /^(\s)/ //necessary to delimit tokens, not tested with other than whitespace
 		},
 		non_terminals = {
+			ME: [
+			[ 'AT', 'ME']
+			],
 			HELLO : [ 
 			 [ 'HELLO', 'ME' ],
 		     [ 'HELLO', 'GREETING'],

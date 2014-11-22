@@ -1,11 +1,28 @@
+var times = {};
+
+function time_start(str) {
+	times[str] = Date.now();
+}
+
+function time_since(str) {
+	return Date.now() - (times[str] || 0);
+}
+
 module.exports = function(bot) {
 
 	bot.on('hello', function(bot, from, target, message) {
 		bot.send(target, bot.vocab.hello(from));
 	})
 
+	var variance = 2  * ( 1000 * 60 );
+	var regular = 3 * (1000 * 60);
+	var current_timeout = regular;
 	bot.on('slackbot_spoke', function(bot, from, target, message) {
-		bot.send(target, 'shut the hell up @'+from);
+		if (time_since('slackbot_spoke') > current_timeout) {
+			time_start('slackbot_spoke');
+			current_timeout = regular + (Math.random() * variance);
+			bot.send(target, 'shut the hell up @'+from);
+		}
 	})
 
 	bot.on('math_exp', function(bot, from, target, message) {

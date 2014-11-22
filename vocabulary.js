@@ -4,21 +4,21 @@ var vocab = module.exports = function(bot) {
 	vocab.hello = function(at) {
 		var collection = bot.vocab.phrases.hello;
 		return collection[ 
-			Math.round(Math.random() * collection.length-1) 
+			Math.floor(Math.random() * collection.length) 
 		] + ' @'+at;
 	}
 
 	vocab.big = function() {
 		var collection = bot.vocab.phrases.large;
 		return collection[ 
-			Math.round(Math.random() * collection.length-1) 
+			Math.floor(Math.random() * collection.length) 
 		];
 	}
 
 	vocab.exclaim = function(bool) {
 		var collection = bot.vocab.phrases.exclamation;
 		var word = collection[ 
-			Math.round(Math.random() * collection.length-1) 
+			Math.floor(Math.random() * collection.length) 
 		];
 		if (bool) word = word.toUpperCase();
 		return word;
