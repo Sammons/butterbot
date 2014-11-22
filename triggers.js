@@ -17,6 +17,7 @@ module.exports = function(bot) {
 
 	bot.on('message', function(bot, from, target, content) {
 		if (content.match(/^melt\s.*/)) {
+			content = content.substring('melt'.length);
 			bot.think(from, target, content);
 		}
 	})

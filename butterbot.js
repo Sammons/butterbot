@@ -34,6 +34,8 @@ function setupChild(bot) {
 
 	bot.child = cp.fork('./imagination.js');
 	bot.child.on('message', function(d) {
+		console.log(arguments)
+		if (!d.data) return;
 		var m = d.data;
 		timer = Date.now();
 		if (m == "__buggerydemons__") {
@@ -41,7 +43,7 @@ function setupChild(bot) {
 		}
 		var who = m.substring(0,2);
 		m = m.substring(2);
-		bot.send(bot.thoughts[who], 'result:'+m)
+		bot.send(bot.thoughts[who], 'butter power provides: '+m)
 		delete bot.thoughts[who];
 	})
 	bot.child.on('error', function() {
@@ -51,12 +53,13 @@ function setupChild(bot) {
 
 
 }
-
+var last_thot = lbler;
 bot.think = function(from, target, msg) {
 	if (!bot.child) setupChild(bot);
 	lbler = lbler/1;
 	lbler = lbler + 1 % 100;
 	if (lbler < 10) lbler = '0'+lbler
+	last_thot = lbler;
 	bot.thoughts[lbler] = target;
 	bot.child.send({ data: lbler+msg});
 }
@@ -65,5 +68,6 @@ bot.patience = setInterval(function() {
 	if ( (Date.now() - timer) > bot.patience_interval ) {
 		bot.child.kill();
 		setupChild(bot);
+		bot.send(bot.thoughts[last_thot], 'ouch: timeout')
 	}
 },bot.patience_interval)
