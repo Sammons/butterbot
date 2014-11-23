@@ -24,6 +24,22 @@ var vocab = module.exports = function(bot) {
 		return word;
 	}
 
+	vocab.whatsup = function() {
+		var collection = bot.vocab.phrases.whatsup;
+		var word = collection[ 
+			Math.floor(Math.random() * collection.length) 
+		];
+		return word;
+	}
+
+	vocab.shut_up_word = function() {
+		var collection = bot.vocab.phrases.noun_cusswords;
+		var word = collection[ 
+			Math.floor(Math.random() * collection.length) 
+		];
+		return word;
+	}
+
 	// like, "X" <name>
 	vocab.phrases.hello = [
 		'what\'s happenin\' my human!',
@@ -64,6 +80,25 @@ var vocab = module.exports = function(bot) {
 		'WHAT',
 		'DAMN',
 		'get out!'
+	]
+	// like @ben, X
+	vocab.phrases.whatsup = [
+		"whatsup?",
+		"how goes it?",
+		"how are you?",
+		"can I help? if so, I'm not doing anything",
+		"butter power!",
+		"yes!?"
+	]
+
+
+	// shut the X up
+	vocab.phrases.noun_cusswords = [
+		"hell",
+		"umferdompen",
+		"snazzboggle",
+		"LARD",
+		"BUTTER"
 	]
 
 	bot.vocab = vocab;

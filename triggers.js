@@ -4,6 +4,7 @@ module.exports = function(bot) {
 
 	/* hear message of any kind */
 	bot.on('PRIVMSG',function(parts) {
+		console.log('PRIVMSG');
 		var msg_parts = parts.raw.match(/^:(.*?)\!.*@.*\s.*PRIVMSG.*(\#|\@)(.*?)\s+:(.*)$/i)
 		if (msg_parts) 
 		{
@@ -25,6 +26,12 @@ module.exports = function(bot) {
 	bot.on('message', function(bot, from, target, content) {
 		if (from.trim().match(/slackbot/i)){
 			bot.trigger('slackbot_spoke', bot, from, target, content);
+		}
+	})
+
+	bot.on('message', function(bot, from, target, content) {
+		if (content.match(/^butter.*(\s.*)?\shelp/i)){
+			bot.trigger('help', bot, from, target, content);
 		}
 	})
 
@@ -78,16 +85,11 @@ module.exports = function(bot) {
 		};
 		try {
 			parser.analyze( content, tokens, non_terminals, function(emitter, root) {
-				var said_something = false;
-				emitter.on('ME', function() {
-					console	.log("I'm saying hello");
-					if (!said_something) {
-						said_something = true;
+					var said_something = false;
+					if (root !== null) {
 						bot.trigger('hello', bot, from, target, content)
 					}
-				})
-
-			})
+				});
 		} catch (e) {
 			console.log(e)
 		}

@@ -21,7 +21,7 @@ module.exports = function(bot) {
 		if (time_since('slackbot_spoke') > current_timeout) {
 			time_start('slackbot_spoke');
 			current_timeout = regular + (Math.random() * variance);
-			bot.send(target, 'shut the hell up @'+from);
+			bot.send(target, 'shut the '+bot.vocab.shut_up_word()+' up @'+from);
 		}
 	})
 
@@ -34,5 +34,16 @@ module.exports = function(bot) {
 		else {
 			bot.send(target, number+'lbs of butter, @'+from);
 		}
+	})
+
+	bot.on('mention', function(bot, from, target, message) {
+		bot.send(target, '@'+from+', '+bot.vocab.whatsup());
+	})
+
+	bot.on('help', function(bot, from, target, message) {
+		bot.send(target, '@'+from+
+			', I can:\n'+
+			'\t`melt <js>  ` <= eval js (you have the `say` function in scope)\n'+
+			'\t`<math_expr>` <= eval math\n\t');
 	})
 }

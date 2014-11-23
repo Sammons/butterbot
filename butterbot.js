@@ -11,10 +11,28 @@ var bot = new bot_core({
 
 bot.open();
 
+bot.q = [];
+
+bot.sending = setInterval(function() {
+	if (bot.q.length > 0) {
+		var cur = bot.q.shift();
+		bot.write('PRIVMSG #'+cur.target+' :'+cur.msg)
+	}
+},400);
+bot.sending.unref();
+
+bot.add_to_q = function(target, msg) {
+	bot.q.push({target: target, msg: msg});
+}
+
 bot.send = function(target, msg) 
 {
-	console.log('PRIVMSG #'+target+' :'+msg)
-	bot.write('PRIVMSG #'+target+' :'+msg);
+	if (bot.q.length > 50) {
+		bot.q.splice(10,30);
+	}
+	var msgs = msg.split('\n');
+	for (var i in msgs)
+		bot.add_to_q(target, msgs[i]);
 }
 
 require('./vocabulary.js')(bot);
@@ -34,17 +52,15 @@ function setupChild(bot) {
 
 	bot.child = cp.fork('./imagination.js');
 	bot.child.on('message', function(d) {
-		console.log(arguments)
 		if (!d.data) return;
 		var m = d.data;
-		timer = Date.now();
 		if (m == "__buggerydemons__") {
+			timer = Date.now();
 			return;
 		}
 		var who = m.substring(0,2);
 		m = m.substring(2);
 		bot.send(bot.thoughts[who], 'butter power provides: '+m)
-		delete bot.thoughts[who];
 	})
 	bot.child.on('error', function() {
 		bot.child.kill();
@@ -68,6 +84,5 @@ bot.patience = setInterval(function() {
 	if ( (Date.now() - timer) > bot.patience_interval ) {
 		bot.child.kill();
 		setupChild(bot);
-		bot.send(bot.thoughts[last_thot], 'ouch: timeout')
 	}
 },bot.patience_interval)
